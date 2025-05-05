@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word to PDF Converter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <h1 class="logo-text">Word to PDF</h1>
+      <p class="tagline">Convert your Word documents to PDF in seconds</p>
+    </div>
+    
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">📄</div>
+        <h3 class="feature-title">Easy Conversion</h3>
+        <p class="feature-text">Simple one-click process to convert your documents</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">Fast Processing</h3>
+        <p class="feature-text">Get your PDF files in seconds</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <h3 class="feature-title">Secure Files</h3>
+        <p class="feature-text">Your documents are processed securely</p>
+      </div>
+    </div>
+    
+    <form action="/convert" method="POST" enctype="multipart/form-data" id="convertForm">
+      <div class="upload-container">
+        <div class="upload-icon">📤</div>
+        <h3>Upload Your Word Document</h3>
+        <p>Drag and drop your file here or click the button below</p>
+        <label class="file-input-label">
+          Choose File
+          <input type="file" class="file-input" name="wordFile" accept=".doc,.docx" required />
+        </label>
+        <div class="file-name" id="fileName"></div>
+      </div>
+      
+      <button type="submit" class="convert-button" id="convertBtn">Convert to PDF</button>
+    </form>
+    
+    <div class="footer">
+      <p>© 2025 Word to PDF Converter | All rights reserved</p>
+    </div>
+  </div>
+  
+  <div class="success-alert" id="successAlert">
+    <div class="checkmark"></div>
+    <div class="success-message">Conversion Successful!</div>
+  </div>
+
+  <script>
+    document.querySelector('.file-input').addEventListener('change', function(e) {
+      const fileName = e.target.files[0] ? e.target.files[0].name : '';
+      const fileNameElement = document.getElementById('fileName');
+      
+      if (fileName) {
+        fileNameElement.textContent = 'Selected file: ' + fileName;
+        fileNameElement.classList.add('show');
+        document.getElementById('convertBtn').classList.add('show');
+      } else {
+        fileNameElement.classList.remove('show');
+        document.getElementById('convertBtn').classList.remove('show');
+      }
+    });
+    
+    const uploadContainer = document.querySelector('.upload-container');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      uploadContainer.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+      uploadContainer.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      uploadContainer.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+      uploadContainer.style.borderColor = '#4F4F9F';
+      uploadContainer.style.backgroundColor = '#f0f5ff';
+      uploadContainer.style.transform = 'scale(1.02)';
+    }
+    
+    function unhighlight() {
+      uploadContainer.style.borderColor = '#ccc';
+      uploadContainer.style.backgroundColor = '#f9f9f9';
+      uploadContainer.style.transform = 'scale(1)';
+    }
+    
+    uploadContainer.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      const fileInput = document.querySelector('.file-input');
+      
+      fileInput.files = files;
+      
+      const event = new Event('change', { bubbles: true });
+      fileInput.dispatchEvent(event);
+    }
+    
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        document.querySelector('.logo-text').style.animation = 'pulse 2s infinite';
+      }, 2000);
+    });
+  
+    document.getElementById('convertForm').addEventListener('submit', function(e) {
+      
+      const form = this;
+      const successAlert = document.getElementById('successAlert');
+      
+      const convertBtn = document.getElementById('convertBtn');
+      const originalBtnText = convertBtn.textContent;
+      convertBtn.textContent = 'Converting...';
+      successAlert.classList.add('show');
+      
+      setTimeout(() => {
+        successAlert.classList.remove('show');
+      }, 5000);
+    });
+  </script>
+</body>
+</html>
